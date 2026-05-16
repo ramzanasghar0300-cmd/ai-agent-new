@@ -1,19 +1,24 @@
 import streamlit as st
-from langchain_groq import ChatGroq
+from groq import Groq
 
-st.title("🤖 LangChain + Groq AI Agent")
+st.title("🤖 AI Agent")
 
-api_key = st.secrets["GROQ_API_KEY"]
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
 
 question = st.text_input("Ask Anything")
 
 if st.button("Ask AI"):
 
-    llm = ChatGroq(
-        groq_api_key=api_key,
-        model_name="llama3-8b-8192"
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": question,
+            }
+        ],
+        model="llama-3.1-8b-instant",
     )
 
-    response = llm.invoke(question)
-
-    st.write(response.content)
+    st.write(chat_completion.choices[0].message.content)
