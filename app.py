@@ -11,7 +11,7 @@ if st.button("Ask AI"):
 
     llm = ChatGroq(
         groq_api_key=api_key,
-        model_name="llama3-70b-8192"
+        model_name="llama3-8b-8192"
     )
 
     response = llm.invoke(question)
