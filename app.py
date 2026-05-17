@@ -1,24 +1,47 @@
 import streamlit as st
-from groq import Groq
+from langchain_groq import ChatGroq
 
-st.title("🤖 AI Agent")
-
-client = Groq(
-    api_key=st.secrets["GROQ_API_KEY"]
+st.set_page_config(
+    page_title="AI Agent",
+    page_icon="🤖",
+    layout="centered"
 )
 
-question = st.text_input("Ask Anything")
+st.title("🤖 AI Assistant")
+st.write("Ask me anything!")
 
-if st.button("Ask AI"):
+api_key = "YOUR_GROQ_KEY"
 
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": question,
-            }
-        ],
-        model="llama-3.1-8b-instant",
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+prompt = st.chat_input("Type your question...")
+
+if prompt:
+
+    st.session_state.messages.append(
+        {"role": "user", "content": prompt}
     )
 
-    st.write(chat_completion.choices[0].message.content)
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    llm = ChatGroq(
+        groq_api_key=api_key,
+        model_name="llama-3.3-70b-versatile"
+    )
+
+    response = llm.invoke(prompt)
+
+    ai_response = response.content
+
+    st.session_state.messages.append(
+        {"role": "assistant", "content": ai_response}
+    )
+
+    with st.chat_message("assistant"):
+        st.markdown(ai_response)
