@@ -1,24 +1,19 @@
 import streamlit as st
 from groq import Groq
 
-st.title("🤖 AI Agent")
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-client = Groq(
-    api_key=st.secrets["GROQ_API_KEY"]
-)
+st.title("AI Chatbot")
 
-question = st.text_input("Ask Anything")
+user_input = st.text_input("Ask something")
 
-if st.button("Ask AI"):
-
-    chat_completion = client.chat.completions.create(
+if user_input:
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
         messages=[
-            {
-                "role": "user",
-                "content": question,
-            }
-        ],
-        model="llama-3.1-8b-instant",
+            {"role": "user", "content": user_input}
+        ]
     )
 
-    st.write(chat_completion.choices[0].message.content)
+    answer = response.choices[0].message.content
+    st.write("AI:", answer)
