@@ -16,4 +16,4 @@ if user_input:
     )
 
     answer = response.choices[0].message.content
-    st.write("AI:", answer)
+    
